@@ -71,7 +71,7 @@ for k=2:M
     end
 end
 
-%A = sparse(A);
+A = sparse(A);
 c=A\b_vigur;
 
 HZ=zeros(N+1,M+1);
