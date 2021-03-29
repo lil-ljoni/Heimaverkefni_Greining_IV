@@ -1,4 +1,4 @@
-function [A,c]=helmholtzeq(L1,L2,h,lambda)
+function c=helmholtzeq(L1,L2,h,lambda);
 
 xb=0;
 yb=0;
@@ -25,12 +25,12 @@ end
 
 %vinstri jadar
 for k=2:M
-    vinstri_p=1+(k-1)*(M+1);
+    vinstri_p=1+(k-1)*(N+1);
     A(vinstri_p,vinstri_p)=4/h^2+q;
     %A(vinstri_p,vinstri_p-1)=-2/h^2;%enginn punktur til vinstri
     A(vinstri_p,vinstri_p+1)=-2/h^2;
-    A(vinstri_p,vinstri_p-M-1)=-1/h^2;
-    A(vinstri_p,vinstri_p+M+1)=-1/h^2;
+    A(vinstri_p,vinstri_p-N-1)=-1/h^2;
+    A(vinstri_p,vinstri_p+N+1)=-1/h^2;
     %y=yb+(k-1)*h;
     b_vigur(vinstri_p)=ff(0,yb+(k-1)*h);%gamma og beta eru = 0
 end
@@ -46,12 +46,12 @@ end
 %haegri jadar
 for k=2:M
     %haegri_p=M+1+(k-1)*(M+1);
-    haegri_p=k*(M+1);
+    haegri_p=k*(N+1);
     A(haegri_p,haegri_p)=4/h^2+q;
     A(haegri_p,haegri_p-1)=-2/h^2;
     %A(haegri_p,haegri_p+1)=0;%engin punktur til vinstri
-    A(haegri_p,haegri_p-M-1)=-1/h^2;
-    A(haegri_p,haegri_p+M+1)=-1/h^2;
+    A(haegri_p,haegri_p-N-1)=-1/h^2;
+    A(haegri_p,haegri_p+N+1)=-1/h^2;
     %y=yb+(k-1)*h;
     b_vigur(haegri_p)=ff(L1,yb+(k-1)*h);%gamma og beta eru = 0
 end
@@ -74,24 +74,17 @@ end
 A = sparse(A);
 c=A\b_vigur;
 
-HZ=zeros(N+1,M+1);
+%HZ=zeros(M+1,N+1);
 
-for j=1:N+1
-    for k=1:M+1
-        HZ(j,k)=c(k+(j-1)*(M+1));
-    end
-end
-
-HZ
-%[r,s]=meshgrid(-1:0.1:1,-2:0.1:2);
-%z=sin(lambda*(L2-s))/sin(lambda*L2);
-%surf(r,s,z)
-%z=@(s) sin(lambda*(L2-s))/sin(lambda*L2);
-
-%g=[];
-%for j=N+1
+%for j=1:N+1
 %    for k=1:M+1
-%       g(c(k+(j-1)*(M+1)))= z((k-1)*h);
+%        HZ(j,k)=c(k+(j-1)*(M+1));
 %    end
 %end
-%g
+
+%HZ;
+x=(0:N+1)*h;
+y=(0:M+1)*h;
+mn=(M+1)*(N+1);
+HZ=(reshape(c(1:mn),N+1,M+1))'
+%mesh(x,y,HZ)
