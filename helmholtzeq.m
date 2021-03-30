@@ -6,6 +6,14 @@ yb=0;
 N=L1/h;
 M=L2/h;
 q=-lambda^2;
+wf = @(t) 1;
+vf = @(t) 0;
+ff = @(t,r) 0;
+
+u0= 10; u1=1;
+
+%wf = @(t) -u0*t/L1*(t/L1-1)^2*(1+t./L1);
+%vf = @(t) u1.*t./L1*(1-t./L1)*(1+t./L1).^2;
 
 
 %x=zeros(N+1,1);
@@ -71,24 +79,39 @@ for k=2:M
     end
 end
 format short
-condition1 = cond(A)
 A = sparse(A);
-condition2 = cond(A)
 c=A\b_vigur;
+
 
 
 mn=(M+1)*(N+1);
 HZ=(reshape(c(1:mn),N+1,M+1))' % nálgun á lausn
 
-[x,y] = meshgrid((0:N).*h,(0:M).*h);
- 
-u_l = sin(lambda.*(L2-y))./sin(L2*lambda)
+%velja plott
 
+plotta_1(HZ,L1,L2,lambda,N,M,h)
+%plotta_2(HZ,L1,L2,lambda,N,M,h)
+
+function plotta_1(HZ,L1,L2,lambda,N,M,h)
+
+[x,y] = meshgrid((0:N).*h,(0:M).*h);
+u_l = sin(lambda.*(L2-y))./sin(L2*lambda);
 figure(1)
 surf(x,y,u_l,"Facecolor","g")
 hold on
 surf(x,y,HZ,"FaceColor","r")
 hold off
 grid on; xlabel("x");ylabel("y");zlabel("z")
-,title("Lausnin {u_e} og  nálgunin fyrir {\lambda}="+lambda)
+title("Lausnin {u_e} og  nálgunin fyrir {\lambda}="+lambda)
 legend("{u_e}","{c_{jk}}")
+end
+end
+
+function plotta_2(HZ,L1,L2,lambda,N,M,h)
+[x,y] = meshgrid((0:N).*h,(0:M).*h);
+figure;
+surf(x,y,HZ)
+grid on; xlabel("x");ylabel("y");zlabel("z")
+title("Nálgun á lausn fyrir {\lambda}="+lambda)
+colormap hsv
+end
